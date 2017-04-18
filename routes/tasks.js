@@ -53,7 +53,8 @@ router.patch('/:id', function(req, res) {
   })
 });
 
-router.delete('/:id/delete', function (req, res) {
+// change to GET because AWS does not support DELETE
+router.get('/:id/delete', function (req, res) {
   db.Task.findOne({ '_id': req.params.id }, function (err, task) {
     if (err || task === null)
       res.status(404).send({ error: "Task not found" });
