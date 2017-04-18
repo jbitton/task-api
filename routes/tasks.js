@@ -53,4 +53,15 @@ router.patch('/:id', function(req, res) {
   })
 });
 
+router.delete('/:id/delete', function (req, res) {
+  db.Task.findOne({ '_id': req.params.id }, function (err, task) {
+    if (err || task === null)
+      res.status(404).send({ error: "Task not found" });
+    else {
+      task.remove();
+      res.status(200).send({ success: "Task deleted" });
+    }
+  });
+});
+
 module.exports = router;

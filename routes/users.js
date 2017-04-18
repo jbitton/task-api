@@ -2,10 +2,20 @@ var express = require('express');
 var router = express.Router();
 var bcrypt = require('bcrypt');
 var db = require('../db/db');
+var ObjectId = require('mongodb').ObjectId;
 
 /* GET users listing. */
 router.get('/', function(req, res) {
   res.send('respond with a resource');
+});
+
+router.get('/:id', function (req, res) {
+  db.User.findOne({ '_id': ObjectId(req.params.id)}, function (err, user) {
+    if (err || user === null)
+      res.status(400).send({ error: "No User found for Id" });
+    else
+      res.status(200).send(user);
+  });
 });
 
 router.post('/new', function(req, res) {
@@ -43,6 +53,23 @@ router.post('/login',function(req, res){
       });
     }
   });
+});
+
+router.patch('/:id', function(req, res) {
+  db.User.findOne({ '_id': ObjectId(req.params.id) }, function (err, user) {
+    if (err || user === null)
+      res.status(400).send({ error: "No User found for Id" });
+    else {
+      var updatedUser = req.body;
+      var id = req.params.id;
+      db.User.update({_id  : ObjectId(id)}, {$set: updatedUser}, function (err, user) {
+        if (err || user === null)
+          res.status(500).send({ error: "Error saving Task" });
+        else
+          res.status(200).send(user);
+      });
+    }
+  })
 });
 
 module.exports = router;
