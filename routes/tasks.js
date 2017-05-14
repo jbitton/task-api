@@ -5,17 +5,13 @@ import ObjectId from 'mongodb';
 const router = express.Router();
 
 /* GET tasks listing. */
-router.get('/', (req, res) => {
-  res.send('respond with a resource');
-});
+router.get('/', (req, res) => res.send('respond with a resource'));
 
-router.get('/:userId', (req, res) => {
-  db.Task.find({ owner: ObjectId(req.params.userId) }, (err, tasks) => {
+router.get('/:userId', (req, res) =>
+  db.Task.find({ owner: ObjectId(req.params.userId) }, (err, tasks) =>
     err || tasks === null
       ? res.status(400).send([])
-      : res.status(200).send(tasks);
-  });
-});
+      : res.status(200).send(tasks)));
 
 router.post('/new/:userId', (req, res) => {
   const task = db.Task();
@@ -25,14 +21,13 @@ router.post('/new/:userId', (req, res) => {
   task.dueDate = new Date(req.body.dueDate);
   task.completed = false;
   task.owner = ObjectId(req.params.userId);
-  task.save((err, task) => {
+  task.save((err, task) =>
     err || task === null
       ? res.status(500).send({error: "Error saving task to DB"})
-      : res.status(200).send(task);
-  });
+      : res.status(200).send(task));
 });
 
-router.patch('/:id', (req, res) => {
+router.patch('/:id', (req, res) =>
   db.Task.findOne({ _id: ObjectId(req.params.id) }, (err, task) => {
     if (err || task === null) {
       res.status(400).send({error: "No Task found for Id"});
@@ -45,10 +40,9 @@ router.patch('/:id', (req, res) => {
           : res.status(200).send(task);
       });
     }
-  })
-});
+  }));
 
-router.delete('/:id/delete', (req, res) => {
+router.delete('/:id/delete', (req, res) =>
   db.Task.findOne({ _id: req.params.id }, (err, task) => {
     if (err || task === null) {
       res.status(404).send({error: "Task not found"});
@@ -56,7 +50,6 @@ router.delete('/:id/delete', (req, res) => {
       task.remove();
       res.status(200).send({ success: "Task deleted" });
     }
-  });
-});
+  }));
 
 export default router;
